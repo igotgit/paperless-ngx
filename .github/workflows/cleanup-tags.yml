@@ -23,7 +23,7 @@ concurrency:
 jobs:
   cleanup-images:
     name: Cleanup Image Tags for ${{ matrix.primary-name }}
-    if: github.repository_owner == 'paperless-ngx'
+    if: false
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -85,8 +85,8 @@ jobs:
     name: Cleanup Untagged Images Tags for ${{ matrix.primary-name }}
     if: github.repository_owner == 'paperless-ngx'
     runs-on: ubuntu-22.04
-    needs:
-      - cleanup-images
+    #needs:
+    #  - cleanup-images
     strategy:
       matrix:
         include:

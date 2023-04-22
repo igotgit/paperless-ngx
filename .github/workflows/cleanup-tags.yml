@@ -72,7 +72,7 @@ jobs:
         name: Cleanup for package "${{ matrix.primary-name }}"
         if: "${{ env.TOKEN != '' }}"
         run: |
-          python ${GITHUB_WORKSPACE}/.github/scripts/cleanup-tags.py --untagged --is-manifest --delete "${{ matrix.primary-name }}"
+          python ${GITHUB_WORKSPACE}/.github/scripts/cleanup-tags.py --is-manifest --delete "${{ matrix.primary-name }}"
       #
       # Clean up registry cache package
       #
@@ -80,4 +80,38 @@ jobs:
         name: Cleanup for package "${{ matrix.cache-name }}"
         if: "${{ env.TOKEN != '' }}"
         run: |
-          python ${GITHUB_WORKSPACE}/.github/scripts/cleanup-tags.py --untagged --delete "${{ matrix.cache-name }}"
+          python ${GITHUB_WORKSPACE}/.github/scripts/cleanup-tags.py --delete "${{ matrix.cache-name }}"
+  cleanup-untagged-images:
+    name: Cleanup Untagged Images Tags for ${{ matrix.primary-name }}
+    if: github.repository_owner == 'paperless-ngx'
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - primary-name: "paperless-ngx"
+          - primary-name: "paperless-ngx/builder/cache/app"
+          - primary-name: "paperless-ngx/builder/qpdf"
+          - primary-name: "paperless-ngx/builder/cache/qpdf"
+          - primary-name: "paperless-ngx/builder/pikepdf"
+          - primary-name: "paperless-ngx/builder/cache/pikepdf"
+          - primary-name: "paperless-ngx/builder/jbig2enc"
+          - primary-name: "paperless-ngx/builder/cache/jbig2enc"
+          - primary-name: "paperless-ngx/builder/psycopg2"
+          - primary-name: "paperless-ngx/builder/cache/psycopg2"
+    steps:
+      -
+        name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Clean untagged images
+        if: "${{ env.TOKEN != '' }}"
+        uses: stumpylog/untagged-image-cleaner@main
+        with:
+          token: ${{ env.TOKEN }}
+          owner: ${{ github.repository_owner }}
+          is_org: "true"
+          package_name: "${{ matrix.primary-name }}"

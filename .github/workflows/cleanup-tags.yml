@@ -85,6 +85,8 @@ jobs:
     name: Cleanup Untagged Images Tags for ${{ matrix.primary-name }}
     if: github.repository_owner == 'paperless-ngx'
     runs-on: ubuntu-22.04
+    needs:
+      - cleanup-images
     strategy:
       matrix:
         include:
@@ -98,6 +100,9 @@ jobs:
           - primary-name: "paperless-ngx/builder/cache/jbig2enc"
           - primary-name: "paperless-ngx/builder/psycopg2"
           - primary-name: "paperless-ngx/builder/cache/psycopg2"
+    env:
+      # Requires a personal access token with the OAuth scope delete:packages
+      TOKEN: ${{ secrets.GHA_CONTAINER_DELETE_TOKEN }}
     steps:
       -
         name: Login to Github Container Registry

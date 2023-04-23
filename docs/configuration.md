@@ -354,7 +354,7 @@ set this value to /paperless. No trailing slash!
 `PAPERLESS_STATIC_URL=<path>`
 
 : Override the STATIC_URL here. Unless you're hosting Paperless off a
-subdomain like /paperless/, you probably don't need to change this.
+suburl like /paperless/, you probably don't need to change this.
 If you do change it, be sure to include the trailing slash.
 
     Defaults to "/static/".
